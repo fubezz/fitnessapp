@@ -61,6 +61,7 @@ public class NewRunActivity extends AppCompatActivity {
             startButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    resetButton.callOnClick();
                     stopButton.setEnabled(true);
                     startButton.setEnabled(false);
                     startTime = SystemClock.uptimeMillis();
