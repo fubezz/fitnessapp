@@ -20,9 +20,10 @@ public class RunSession {
     private String date;
     private String time;
     private String locations;
+    private int steps;
 
 
-    public RunSession(long currentTimer, List<Location> locList) {
+    public RunSession(long currentTimer, List<Location> locList, int steps) {
 
         SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy, HH:mm");
         date = df.format(Calendar.getInstance().getTime());
@@ -50,13 +51,16 @@ public class RunSession {
         }
         Log.v("Locations", locations);
 
+        this.steps = steps;
+
 
     }
-    public RunSession(long dateLong,String date, String time,String locations) {
+    public RunSession(long dateLong,String date, String time,String locations, int steps) {
         this.dateLong = dateLong;
         this.date = date;
         this.time = time;
         this.locations = locations;
+        this.steps = steps;
     }
 
     public String getDate() {
@@ -93,6 +97,14 @@ public class RunSession {
 
     public String toString(){
         return this.getDate();
+    }
+
+    public int getSteps() {
+        return steps;
+    }
+
+    public void setSteps(int steps) {
+        this.steps = steps;
     }
 
 }

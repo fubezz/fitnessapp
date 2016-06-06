@@ -3,6 +3,10 @@ package com.fubezz.fitnessapp;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -17,18 +21,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fubezz.fitnessapp.listener.LocationTrackerListener;
+import com.fubezz.fitnessapp.listener.StepDetectionListener;
 import com.fubezz.fitnessapp.model.DbHandler;
 import com.fubezz.fitnessapp.model.RunSession;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public class NewRunActivity extends AppCompatActivity {
+public class NewRunActivity extends AppCompatActivity{
 
     private Handler timerHandler;
+    private Handler stepHandler = null;
     private long startTime = 0L;
     private long currentTimer = 0L;
-
+    private TextView stepCounter;
+    private StepDetectionListener stepDetector = null;
 
 
     @Override
@@ -45,9 +52,17 @@ public class NewRunActivity extends AppCompatActivity {
         resetButton.setEnabled(false);
         final Button saveButton = (Button) findViewById(R.id.btnNewRunSave);
         saveButton.setEnabled(false);
-        final TextView timerValue = (TextView) findViewById(R.id.timeTextView);
 
+        final TextView timerValue = (TextView) findViewById(R.id.timeTextView);
         timerHandler = new Handler();
+
+        stepCounter = (TextView) findViewById(R.id.stepLabel);
+        stepDetector = new StepDetectionListener(this);
+        if (stepDetector.getSensor() != null){
+            stepDetector.setCurrentlyRunning(false);
+            stepDetector.setSteps(0);
+            stepHandler = new Handler();
+        }
 
 
         final List<Location> locList = new LinkedList<Location>();
@@ -65,7 +80,7 @@ public class NewRunActivity extends AppCompatActivity {
                     stopButton.setEnabled(true);
                     startButton.setEnabled(false);
                     startTime = SystemClock.uptimeMillis();
-                    timerHandler.postDelayed(updateTimerThread, 0);
+                    timerHandler.postDelayed(timeCounterThread, 0);
                     if (ActivityCompat.checkSelfPermission(NewRunActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
                             || ActivityCompat.checkSelfPermission(NewRunActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                         locationManager.requestLocationUpdates(myListener.getProviderName(), myListener.minTime, myListener.minDistance, myListener);
@@ -74,9 +89,15 @@ public class NewRunActivity extends AppCompatActivity {
                                 "For GPS tracking please set permissions", Toast.LENGTH_SHORT)
                                 .show();
                     }
+                    if (stepHandler != null){
+                        stepDetector.setCurrentlyRunning(true);
+                        stepHandler.postDelayed(stepDetectorThread,10);
+                    }
+
 
                 }
             });
+           
         }
 
         if (stopButton != null) {
@@ -86,14 +107,20 @@ public class NewRunActivity extends AppCompatActivity {
                     resetButton.setEnabled(true);
                     saveButton.setEnabled(true);
                     stopButton.setEnabled(false);
-                    timerHandler.removeCallbacks(updateTimerThread);
+
+                    timerHandler.removeCallbacks(timeCounterThread);
                     if (ActivityCompat.checkSelfPermission(NewRunActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
                             || ActivityCompat.checkSelfPermission(NewRunActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                         locationManager.removeUpdates(myListener);
-                        Toast.makeText(NewRunActivity.this,
-                                "Debug GPS positions: " + locList.size(), Toast.LENGTH_SHORT)
-                                .show();
+//                        Toast.makeText(NewRunActivity.this,
+//                                "Debug GPS positions: " + locList.size(), Toast.LENGTH_SHORT)
+//                                .show();
                     }
+                    if (stepHandler != null){
+                        stepDetector.setCurrentlyRunning(false);
+                        stepHandler.removeCallbacks(stepDetectorThread);
+                    }
+
 
                 }
             });
@@ -107,7 +134,9 @@ public class NewRunActivity extends AppCompatActivity {
                     resetButton.setEnabled(false);
                     saveButton.setEnabled(false);
                     startTime = 0;
+                    stepDetector.setSteps(0);
                     timerValue.setText("00:00:00");
+                    stepCounter.setText("Steps: 0");
                     locList.clear();
                 }
             });
@@ -117,7 +146,7 @@ public class NewRunActivity extends AppCompatActivity {
             saveButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    RunSession session = new RunSession(currentTimer,locList);
+                    RunSession session = new RunSession(currentTimer,locList,stepDetector.getSteps());
                     DbHandler saver = new DbHandler(NewRunActivity.this);
                     saver.addRunSession(session);
                     saveButton.setEnabled(false);
@@ -129,7 +158,7 @@ public class NewRunActivity extends AppCompatActivity {
     }
 
 
-    private Runnable updateTimerThread = new Runnable() {
+    private Runnable timeCounterThread = new Runnable() {
         @Override
         public void run() {
             long timeInMilliseconds = SystemClock.uptimeMillis() - startTime;
@@ -142,6 +171,15 @@ public class NewRunActivity extends AppCompatActivity {
             TextView timerValue = (TextView) findViewById(R.id.timeTextView);
             timerValue.setText("" + hours + ":" + String.format("%02d",mins) + ":" + String.format("%02d",secs));
             timerHandler.postDelayed(this,0);
+        }
+    };
+
+    private Runnable stepDetectorThread = new Runnable() {
+        @Override
+        public void run() {
+            int steps = stepDetector.getSteps();
+            stepCounter.setText("Steps: " + steps);
+            stepHandler.postDelayed(this,0);
         }
     };
 

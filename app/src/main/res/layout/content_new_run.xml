@@ -57,21 +57,32 @@
         android:layout_height="wrap_content"
         android:text="Reset"
         android:id="@+id/btnNewRunReset"
-        android:layout_centerVertical="true"
+        android:saveEnabled="false"
+        android:layout_below="@+id/timeTextView"
         android:layout_centerHorizontal="true"
-        android:saveEnabled="false"/>
+        android:layout_marginTop="131dp" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Save"
         android:id="@+id/btnNewRunSave"
-        android:layout_marginTop="89dp"
+        android:layout_marginTop="40dp"
+        android:saveEnabled="false"
         android:layout_below="@+id/btnNewRunReset"
         android:layout_alignRight="@+id/btnNewRunStop"
         android:layout_alignEnd="@+id/btnNewRunStop"
         android:layout_alignLeft="@+id/timeTextView"
-        android:layout_alignStart="@+id/timeTextView"
-        android:saveEnabled="false"/>
+        android:layout_alignStart="@+id/timeTextView" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Steps: 0"
+        android:id="@+id/stepLabel"
+        android:textSize="40sp"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>
