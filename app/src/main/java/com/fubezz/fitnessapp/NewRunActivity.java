@@ -44,6 +44,8 @@ public class NewRunActivity extends AppCompatActivity{
         setContentView(R.layout.activity_new_run);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         final Button startButton = (Button) findViewById(R.id.btnNewRunStart);
         final Button stopButton = (Button) findViewById(R.id.btnNewRunStop);
@@ -91,7 +93,7 @@ public class NewRunActivity extends AppCompatActivity{
                     }
                     if (stepHandler != null){
                         stepDetector.setCurrentlyRunning(true);
-                        stepHandler.postDelayed(stepDetectorThread,10);
+                        stepHandler.postDelayed(stepDetectorThread,10000);
                     }
 
 

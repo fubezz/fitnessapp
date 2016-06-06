@@ -63,9 +63,9 @@ public class LocationTrackerListener implements LocationListener {
     void doWorkWithNewLocation(Location location) {
         if (isBetterLocation(oldLocation, location)) {
             // If location is better, do some user preview.
-            Toast.makeText(activity,
-                    "Debug Position: " + location.toString(), Toast.LENGTH_SHORT)
-                    .show();
+//            Toast.makeText(activity,
+//                    "Debug Position: " + location.toString(), Toast.LENGTH_SHORT)
+//                    .show();
             locList.add(location);
         }
 

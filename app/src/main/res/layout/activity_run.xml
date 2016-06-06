@@ -7,6 +7,8 @@
     android:fitsSystemWindows="true"
     tools:context="com.fubezz.fitnessapp.RunActivity">
 
+    <include layout="@layout/content_run" />
+
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -21,7 +23,7 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_run" />
+
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fabNewRun"
