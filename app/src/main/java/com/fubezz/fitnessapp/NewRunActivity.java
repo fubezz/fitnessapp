@@ -40,8 +40,11 @@ public class NewRunActivity extends AppCompatActivity {
 
         final Button startButton = (Button) findViewById(R.id.btnNewRunStart);
         final Button stopButton = (Button) findViewById(R.id.btnNewRunStop);
+        stopButton.setEnabled(false);
         final Button resetButton = (Button) findViewById(R.id.btnNewRunReset);
+        resetButton.setEnabled(false);
         final Button saveButton = (Button) findViewById(R.id.btnNewRunSave);
+        saveButton.setEnabled(false);
         final TextView timerValue = (TextView) findViewById(R.id.timeTextView);
 
         timerHandler = new Handler();
@@ -58,6 +61,8 @@ public class NewRunActivity extends AppCompatActivity {
             startButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    stopButton.setEnabled(true);
+                    startButton.setEnabled(false);
                     startTime = SystemClock.uptimeMillis();
                     timerHandler.postDelayed(updateTimerThread, 0);
                     if (ActivityCompat.checkSelfPermission(NewRunActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
@@ -77,6 +82,9 @@ public class NewRunActivity extends AppCompatActivity {
             stopButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    resetButton.setEnabled(true);
+                    saveButton.setEnabled(true);
+                    stopButton.setEnabled(false);
                     timerHandler.removeCallbacks(updateTimerThread);
                     if (ActivityCompat.checkSelfPermission(NewRunActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
                             || ActivityCompat.checkSelfPermission(NewRunActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -94,6 +102,9 @@ public class NewRunActivity extends AppCompatActivity {
             resetButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    startButton.setEnabled(true);
+                    resetButton.setEnabled(false);
+                    saveButton.setEnabled(false);
                     startTime = 0;
                     timerValue.setText("00:00:00");
                     locList.clear();
@@ -108,6 +119,9 @@ public class NewRunActivity extends AppCompatActivity {
                     RunSession session = new RunSession(currentTimer,locList);
                     DbHandler saver = new DbHandler(NewRunActivity.this);
                     saver.addRunSession(session);
+                    saveButton.setEnabled(false);
+                    startButton.setEnabled(true);
+                    resetButton.setEnabled(false);
                 }
             });
         }

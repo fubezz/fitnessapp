@@ -13,11 +13,6 @@ import android.widget.ListView;
 import com.fubezz.fitnessapp.model.DbHandler;
 import com.fubezz.fitnessapp.model.RunSession;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 public class RunActivity extends AppCompatActivity {
