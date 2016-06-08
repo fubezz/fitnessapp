@@ -21,7 +21,7 @@
         android:id="@+id/btnRun"
         android:layout_weight="0.11"
         android:textSize="30dp"
-        android:background="@color/baseColor"
+        android:background="?attr/colorPrimary"
         android:textStyle="bold|italic"
         android:textColor="@color/abc_primary_text_disable_only_material_dark" />
 </LinearLayout>
