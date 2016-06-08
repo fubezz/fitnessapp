@@ -83,7 +83,11 @@ public class RunActivity extends AppCompatActivity {
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+
                     Intent intent = new Intent(RunActivity.this,TabActivity.class);
+                    RunSession sessionClicked = sessionList.get(position);
+                    intent.putExtra("runsession", sessionClicked.getDateLong());
                     startActivity(intent);
                 }
             });

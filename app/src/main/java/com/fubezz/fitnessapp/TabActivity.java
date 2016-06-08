@@ -15,6 +15,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.fubezz.fitnessapp.model.DbHandler;
+import com.fubezz.fitnessapp.model.RunSession;
+
 public class TabActivity extends AppCompatActivity {
 
     /**
@@ -31,10 +34,15 @@ public class TabActivity extends AppCompatActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
+    private long currentSession;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Bundle b = getIntent().getExtras();
+        currentSession = b.getLong("runsession");
+
         setContentView(R.layout.activity_tab);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -126,8 +134,11 @@ public class TabActivity extends AppCompatActivity {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
             if (position == 0){
-
-                return new MapsFragment();
+                MapsFragment frag = new MapsFragment();
+                Bundle bundle = new Bundle();
+                bundle.putLong("runsession",currentSession);
+                frag.setArguments(bundle);
+                return frag;
             }else{
                 return PlaceholderFragment.newInstance(position + 1);
             }
