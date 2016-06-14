@@ -156,7 +156,7 @@ public class TabActivity extends AppCompatActivity {
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return "Google Maps";
+                    return "Maps";
                 case 1:
                     return "Statistics";
 
