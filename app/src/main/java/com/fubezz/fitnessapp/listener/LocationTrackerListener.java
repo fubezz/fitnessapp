@@ -10,6 +10,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.util.List;
@@ -67,6 +68,7 @@ public class LocationTrackerListener implements LocationListener {
 //                    "Debug Position: " + location.toString(), Toast.LENGTH_SHORT)
 //                    .show();
             locList.add(location);
+            Log.v("Location:", location.toString());
         }
 
         oldLocation = location;
@@ -106,7 +108,7 @@ public class LocationTrackerListener implements LocationListener {
             long timeDifference = newLocation.getTime() - oldLocation.getTime();
 
             // If time difference is not greater then allowed threshold we accept it.
-            if (timeDifference > -TIME_DIFFERENCE_THRESHOLD) {
+            if (timeDifference > - TIME_DIFFERENCE_THRESHOLD) {
                 return true;
             }
         }

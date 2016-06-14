@@ -15,14 +15,16 @@ import com.fubezz.fitnessapp.NewRunActivity;
 public class StepDetectionListener implements SensorEventListener {
 
     private int steps = 0;
+    private int startSteps = -1;
     private boolean currentlyRunning = false;
     private Sensor sensor;
 
     public StepDetectionListener(NewRunActivity newRunActivity){
         final SensorManager sensorManager = (SensorManager) newRunActivity.getSystemService(Context.SENSOR_SERVICE);
-         sensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
+         sensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
         if(sensor != null){
             sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
+
         }else{
             Toast.makeText(newRunActivity, "Count sensor not available!", Toast.LENGTH_LONG).show();
         }
@@ -33,9 +35,14 @@ public class StepDetectionListener implements SensorEventListener {
     @Override
     public void onSensorChanged(SensorEvent event) {
 
-        if (event.sensor.getType() == Sensor.TYPE_STEP_DETECTOR){
+        if (event.sensor.getType() == Sensor.TYPE_STEP_COUNTER){
             if (currentlyRunning){
-                steps++;
+                if (startSteps == -1){
+                    startSteps = (int) event.values[0];
+                }
+                else{
+                    steps = (int) (event.values[0] - startSteps);
+                }
             }
         }
 

@@ -20,6 +20,7 @@ public class RunSession {
     private String date;
     private String time;
     private String locations;
+    private String times;
     private int steps;
 
 
@@ -35,11 +36,12 @@ public class RunSession {
 
         locations = "";
 
-        //Format: <long/lat/acc/speed>
+        //Format: <long/lat/time/acc/speed>
         for(Location l : locList){
             String curr = "<";
             curr += Double.toString(l.getLongitude()) + "/";
             curr += Double.toString(l.getLatitude()) + "/";
+            curr += Long.toString(l.getTime()) + "/";
             if(l.hasAccuracy()){
                 curr += Float.toString(l.getAccuracy()) + "/";
             }
@@ -107,4 +109,11 @@ public class RunSession {
         this.steps = steps;
     }
 
+    public String getTimes() {
+        return times;
+    }
+
+    public void setTimes(String times) {
+        this.times = times;
+    }
 }

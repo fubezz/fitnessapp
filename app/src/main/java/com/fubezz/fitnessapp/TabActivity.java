@@ -45,7 +45,8 @@ public class TabActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_tab);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tab_toolbar);
+        toolbar.setTitle("Statistics");
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         // Create the adapter that will return a fragment for each of the three
@@ -148,7 +149,7 @@ public class TabActivity extends AppCompatActivity {
         @Override
         public int getCount() {
             // Show 3 total pages.
-            return 3;
+            return 2;
         }
 
         @Override
@@ -157,9 +158,8 @@ public class TabActivity extends AppCompatActivity {
                 case 0:
                     return "Google Maps";
                 case 1:
-                    return "Maps2";
-                case 2:
-                    return "Maps2";
+                    return "Statistics";
+
             }
             return null;
         }

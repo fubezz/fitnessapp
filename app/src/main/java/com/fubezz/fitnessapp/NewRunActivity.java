@@ -93,7 +93,7 @@ public class NewRunActivity extends AppCompatActivity{
                     }
                     if (stepHandler != null){
                         stepDetector.setCurrentlyRunning(true);
-                        stepHandler.postDelayed(stepDetectorThread,10000);
+                        stepHandler.postDelayed(stepDetectorThread,0);
                     }
 
 
@@ -181,7 +181,8 @@ public class NewRunActivity extends AppCompatActivity{
         public void run() {
             int steps = stepDetector.getSteps();
             stepCounter.setText("Steps: " + steps);
-            stepHandler.postDelayed(this,0);
+            stepHandler.postDelayed(this,10000);
+
         }
     };
 
