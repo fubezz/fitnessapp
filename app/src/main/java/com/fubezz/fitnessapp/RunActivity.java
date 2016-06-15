@@ -1,19 +1,29 @@
 package com.fubezz.fitnessapp;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.fubezz.fitnessapp.listener.ItemClickSupport;
 import com.fubezz.fitnessapp.model.DbHandler;
 import com.fubezz.fitnessapp.model.RunSession;
 
@@ -41,56 +51,98 @@ public class RunActivity extends AppCompatActivity {
         });
 
 
-        final ListView listView = (ListView) findViewById(R.id.RunList);
+       // final ListView listView = (ListView) findViewById(R.id.RunList);
+        RecyclerView rv = (RecyclerView) findViewById(R.id.run_recycleView);
+        rv.setHasFixedSize(true);
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+        rv.setLayoutManager(llm);
+
+
         final DbHandler saver = new DbHandler(RunActivity.this);
         final List<RunSession> sessionList = saver.getAllRunSessions();
         Log.v("RunListSize: ", Integer.toString(sessionList.size()));
-        final ArrayAdapter<RunSession> adapter = new ArrayAdapter<RunSession>(RunActivity.this, android.R.layout.simple_list_item_1, sessionList);
-        listView.setAdapter(adapter);
-        if (listView != null) {
-            listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        //final ArrayAdapter<RunSession> adapter = new ArrayAdapter<RunSession>(RunActivity.this, android.R.layout.simple_list_item_1, sessionList);
+        //listView.setAdapter(adapter);
+        final RVAdapter adapter = new RVAdapter(sessionList);
+
+        if (rv != null) {
+            rv.setAdapter(adapter);
+            ItemClickSupport.addTo(rv).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
                 @Override
-                public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
-                    new AlertDialog.Builder(RunActivity.this)
-                            .setTitle("Delete run session")
-                            .setMessage("Are you sure you want to delete this session?")
-                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    final List<RunSession> sessionList = saver.getAllRunSessions();
-                                    ArrayAdapter<RunSession> adp = (ArrayAdapter<RunSession>) listView.getAdapter();
-                                    RunSession toDelete = sessionList.get(position);
-                                    saver.deleteRunSession(toDelete);
-                                    //remove from list
-                                    sessionList.remove(position);
-                                    adp.remove(adp.getItem(position));
-                                    adp.notifyDataSetChanged();
-                                    Toast.makeText(RunActivity.this, "Session: " + toDelete.getDate() + " deleted", Toast.LENGTH_SHORT).show();
-                                }
-                            })
-                            .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    // do nothing
-
-                                }
-                            })
-                            .setIcon(android.R.drawable.ic_dialog_alert)
-                            .show();
-
-                    return false;
-                }
-            });
-
-            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-
+                public void onItemClicked(RecyclerView recyclerView, int position, View v) {
                     Intent intent = new Intent(RunActivity.this,TabActivity.class);
                     RunSession sessionClicked = sessionList.get(position);
                     intent.putExtra("runsession", sessionClicked.getDateLong());
                     startActivity(intent);
                 }
             });
+            ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+
+
+                @Override
+                public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                    return true;
+                }
+
+                @Override
+                public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                    int position = viewHolder.getLayoutPosition();
+                    RunSession toDelete = adapter.sessions.get(position);
+                    Log.v("Delete Position: ", Integer.toString(position));
+                    saver.deleteRunSession(toDelete);
+                                    //remove from list
+                    sessionList.remove(position);
+                    adapter.notifyItemRemoved(viewHolder.getLayoutPosition());
+
+                }
+            };
+            ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+            itemTouchHelper.attachToRecyclerView(rv);
+//            rv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+//                @Override
+//                public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+//                    new AlertDialog.Builder(RunActivity.this)
+//                            .setTitle("Delete run session")
+//                            .setMessage("Are you sure you want to delete this session?")
+//                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+//                                public void onClick(DialogInterface dialog, int which) {
+//                                    final List<RunSession> sessionList = saver.getAllRunSessions();
+//                                    ArrayAdapter<RunSession> adp = (ArrayAdapter<RunSession>) listView.getAdapter();
+//                                    RunSession toDelete = sessionList.get(position);
+//                                    saver.deleteRunSession(toDelete);
+//                                    //remove from list
+//                                    sessionList.remove(position);
+//                                    adp.remove(adp.getItem(position));
+//                                    adp.notifyDataSetChanged();
+//                                    Toast.makeText(RunActivity.this, "Session: " + toDelete.getDate() + " deleted", Toast.LENGTH_SHORT).show();
+//                                }
+//                            })
+//                            .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+//                                public void onClick(DialogInterface dialog, int which) {
+//                                    // do nothing
+//
+//                                }
+//                            })
+//                            .setIcon(android.R.drawable.ic_dialog_alert)
+//                            .show();
+//
+//                    return true;
+//                }
+//            });
+//
+//            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//                @Override
+//                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//
+//
+//                    Intent intent = new Intent(RunActivity.this,TabActivity.class);
+//                    RunSession sessionClicked = sessionList.get(position);
+//                    intent.putExtra("runsession", sessionClicked.getDateLong());
+//                    startActivity(intent);
+//
+//
+//                }
+//            });
         }
 
 
@@ -98,13 +150,62 @@ public class RunActivity extends AppCompatActivity {
     @Override
     public void onResume(){
         super.onResume();
-        ListView listView = (ListView) findViewById(R.id.RunList);
-        DbHandler saver = new DbHandler(RunActivity.this);
-        List<RunSession> sessionList = saver.getAllRunSessions();
-        Log.v("RunListSize: ", Integer.toString(sessionList.size()));
-        ArrayAdapter adapter = new ArrayAdapter<RunSession>(this, android.R.layout.simple_list_item_1, sessionList);
-        listView.setAdapter(adapter);
+//        ListView listView = (ListView) findViewById(R.id.RunList);
+//        DbHandler saver = new DbHandler(RunActivity.this);
+//        List<RunSession> sessionList = saver.getAllRunSessions();
+//        Log.v("RunListSize: ", Integer.toString(sessionList.size()));
+//        ArrayAdapter adapter = new ArrayAdapter<RunSession>(this, android.R.layout.simple_list_item_1, sessionList);
+//        listView.setAdapter(adapter);
 
     }
+
+    private static class RVAdapter extends RecyclerView.Adapter<RVAdapter.RunSessionViewHolder>{
+
+        List<RunSession> sessions;
+
+        RVAdapter(List<RunSession> sessions){
+            this.sessions = sessions;
+        }
+
+        @Override
+        public RunSessionViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_layout, parent, false);
+            RunSessionViewHolder pvh = new RunSessionViewHolder(v);
+            return pvh;
+        }
+
+        @Override
+        public void onBindViewHolder(RunSessionViewHolder holder, int position) {
+            holder.sessionDate.setText(sessions.get(position).getDate() + " Uhr");
+            holder.sessionDist.setText("Distance: 6km");
+        }
+
+        @Override
+        public int getItemCount() {
+            return sessions.size();
+        }
+
+        @Override
+        public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+            super.onAttachedToRecyclerView(recyclerView);
+        }
+
+
+        public static class RunSessionViewHolder extends RecyclerView.ViewHolder {
+            TextView sessionDate;
+            TextView sessionDist;
+
+            RunSessionViewHolder(View itemView) {
+                super(itemView);
+                sessionDate = (TextView)itemView.findViewById(R.id.card_date);
+                sessionDist = (TextView)itemView.findViewById(R.id.card_dist);
+
+            }
+        }
+
+    }
+
+
+
 
 }
