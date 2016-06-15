@@ -1,7 +1,9 @@
 package com.fubezz.fitnessapp;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -16,6 +18,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -78,7 +81,7 @@ public class NewRunActivity extends AppCompatActivity{
             startButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    resetButton.callOnClick();
+                    //resetButton.callOnClick();
                     stopButton.setEnabled(true);
                     startButton.setEnabled(false);
                     startTime = SystemClock.uptimeMillis();
@@ -132,14 +135,31 @@ public class NewRunActivity extends AppCompatActivity{
             resetButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startButton.setEnabled(true);
-                    resetButton.setEnabled(false);
-                    saveButton.setEnabled(false);
-                    startTime = 0;
-                    stepDetector.setSteps(0);
-                    timerValue.setText("00:00:00");
-                    stepCounter.setText("Steps: 0");
-                    locList.clear();
+                    new AlertDialog.Builder(NewRunActivity.this)
+                            .setTitle("Reset run session")
+                            .setMessage("Are you sure you want to reset the session?")
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    startButton.setEnabled(true);
+                                    resetButton.setEnabled(false);
+                                    saveButton.setEnabled(false);
+                                    startTime = 0;
+                                    stepDetector.setSteps(0);
+                                    timerValue.setText("00:00:00");
+                                    stepCounter.setText("Steps: 0");
+                                    locList.clear();
+                                    Toast.makeText(NewRunActivity.this, "Session reseted", Toast.LENGTH_SHORT).show();
+                                }
+                            })
+                            .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // do nothing
+
+                                }
+                            })
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .show();
+
                 }
             });
         }
