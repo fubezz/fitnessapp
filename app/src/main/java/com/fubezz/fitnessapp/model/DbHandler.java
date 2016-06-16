@@ -20,7 +20,7 @@ public class DbHandler extends SQLiteOpenHelper {
     List<Location> list;
     long timeInMillis = 0;
 
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     // Database Name
     private static final String DATABASE_NAME = "SportSessions";
@@ -30,10 +30,11 @@ public class DbHandler extends SQLiteOpenHelper {
 
     // Contacts Table Columns names
     private static final String KEY_ID = "ID";
-    private static final String KEY_DATE = "date";
-    private static final String KEY_TIME = "time";
-    private static final String KEY_LOCATIONS = "locations";
-    private static final String KEY_STEPS = "steps";
+    private static final String KEY_NAME = "NAME";
+    private static final String KEY_DATE = "DATE";
+    private static final String KEY_TIME = "TIME";
+    private static final String KEY_LOCATIONS = "LOCATIONS";
+    private static final String KEY_STEPS = "STEPS";
 
 
 
@@ -47,7 +48,7 @@ public class DbHandler extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String CREATE_RUN_TABLE = "CREATE TABLE " + TABLE_RUN + "("
-            + KEY_ID + " INTEGER PRIMARY KEY," + KEY_DATE + " TEXT," + KEY_TIME + " TEXT,"
+            + KEY_ID + " INTEGER PRIMARY KEY," + KEY_NAME + " TEXT," + KEY_DATE + " TEXT," + KEY_TIME + " TEXT,"
                 + KEY_LOCATIONS + " TEXT," + KEY_STEPS + " INTEGER" + ")";
         Log.v("Table: ", CREATE_RUN_TABLE);
         db.execSQL(CREATE_RUN_TABLE);
@@ -68,7 +69,9 @@ public class DbHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(KEY_ID,s.getDateLong());
+        values.put(KEY_NAME,s.getName());
         values.put(KEY_DATE, s.getDate());
+        Log.v("PutName: ",s.getName());
         values.put(KEY_TIME, s.getTime());
         values.put(KEY_LOCATIONS,s.getLocations());
         values.put(KEY_STEPS,s.getSteps());
@@ -79,13 +82,14 @@ public class DbHandler extends SQLiteOpenHelper {
 
     public RunSession getRunSession(long id){
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_RUN, new String[] { KEY_ID,
+        Cursor cursor = db.query(TABLE_RUN, new String[] { KEY_ID, KEY_NAME,
                         KEY_DATE, KEY_TIME, KEY_LOCATIONS, KEY_STEPS}, KEY_ID + "=?",
                 new String[] { String.valueOf(id) }, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
 
-       RunSession session = new RunSession(cursor.getLong(0),cursor.getString(1),cursor.getString(2),cursor.getString(3),cursor.getInt(4));
+       RunSession session = new RunSession(cursor.getLong(0),cursor.getString(1),cursor.getString(2),cursor.getString(3),cursor.getString(4),cursor.getInt(5));
+       Log.v("Loaded Session: ", session.getDate() + ", " + session.getName());
         // return contact
         db.close();
         return session;
@@ -103,10 +107,10 @@ public class DbHandler extends SQLiteOpenHelper {
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
-                RunSession contact = new RunSession(cursor.getLong(0),cursor.getString(1),cursor.getString(2),cursor.getString(3),cursor.getInt(4));
+                RunSession session = new RunSession(cursor.getLong(0), cursor.getString(1),cursor.getString(2),cursor.getString(3),cursor.getString(4),cursor.getInt(5));
 
                 // Adding contact to list
-                sessionList.add(contact);
+                sessionList.add(session);
             } while (cursor.moveToNext());
         }
 

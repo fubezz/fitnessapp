@@ -17,6 +17,7 @@ public class RunSession {
 
 
     private long dateLong;
+    private String name;
     private String date;
     private String time;
     private String locations;
@@ -24,17 +25,17 @@ public class RunSession {
     private int steps;
 
 
-    public RunSession(long currentTimer, List<Location> locList, int steps) {
+    public RunSession(long currentTimer, String name, List<Location> locList, int steps) {
 
         SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy, HH:mm");
-        date = df.format(Calendar.getInstance().getTime());
+        this.date = df.format(Calendar.getInstance().getTime());
         Log.v("Date", date);
-        dateLong = Calendar.getInstance().getTimeInMillis();
-
-        time = Long.toString(currentTimer);
+        this.dateLong = Calendar.getInstance().getTimeInMillis();
+        this.name = name;
+        this.time = Long.toString(currentTimer);
         Log.v("time", time);
 
-        locations = "";
+        this.locations = "";
 
         //Format: <long/lat/time/acc/speed>
         for(Location l : locList){
@@ -49,7 +50,7 @@ public class RunSession {
                 curr += Float.toString(l.getSpeed());
             }
             curr += ">";
-            locations += curr;
+            this.locations += curr;
         }
         Log.v("Locations", locations);
 
@@ -57,8 +58,9 @@ public class RunSession {
 
 
     }
-    public RunSession(long dateLong,String date, String time,String locations, int steps) {
+    public RunSession(long dateLong,String name ,String date, String time,String locations, int steps) {
         this.dateLong = dateLong;
+        this.name = name;
         this.date = date;
         this.time = time;
         this.locations = locations;
@@ -115,5 +117,13 @@ public class RunSession {
 
     public void setTimes(String times) {
         this.times = times;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

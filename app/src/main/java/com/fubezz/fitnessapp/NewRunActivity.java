@@ -17,9 +17,11 @@ import android.os.SystemClock;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -74,8 +76,7 @@ public class NewRunActivity extends AppCompatActivity{
         final LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         final LocationTrackerListener myListener = new LocationTrackerListener(this, locList);
 
-        String locationProvider = LocationManager.NETWORK_PROVIDER;
-        myListener.oldLocation = locationManager.getLastKnownLocation(locationProvider);
+
 
         if (startButton != null) {
             startButton.setOnClickListener(new View.OnClickListener() {
@@ -88,6 +89,8 @@ public class NewRunActivity extends AppCompatActivity{
                     timerHandler.postDelayed(timeCounterThread, 0);
                     if (ActivityCompat.checkSelfPermission(NewRunActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
                             || ActivityCompat.checkSelfPermission(NewRunActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                        String locationProvider = LocationManager.NETWORK_PROVIDER;
+                        myListener.oldLocation = locationManager.getLastKnownLocation(locationProvider);
                         locationManager.requestLocationUpdates(myListener.getProviderName(), myListener.minTime, myListener.minDistance, myListener);
                     } else {
                         Toast.makeText(NewRunActivity.this,
@@ -168,12 +171,23 @@ public class NewRunActivity extends AppCompatActivity{
             saveButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    RunSession session = new RunSession(currentTimer,locList,stepDetector.getSteps());
-                    DbHandler saver = new DbHandler(NewRunActivity.this);
-                    saver.addRunSession(session);
-                    saveButton.setEnabled(false);
-                    startButton.setEnabled(true);
-                    resetButton.setEnabled(false);
+                    final RunSession session = new RunSession(currentTimer,"No Name",locList,stepDetector.getSteps());
+                    final EditText name = new EditText(NewRunActivity.this);
+                    new AlertDialog.Builder(NewRunActivity.this)
+                            .setMessage("Please type a name")
+                            .setView(name)
+                            .setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    String n = name.getText().toString();
+                                    session.setName(n);
+                                    Log.v("SetNameForSession: ", session.getName());
+                                    DbHandler saver = new DbHandler(NewRunActivity.this);
+                                    saver.addRunSession(session);
+                                    saveButton.setEnabled(false);
+                                    startButton.setEnabled(true);
+                                    resetButton.setEnabled(false);
+                                }
+                            }).show();
                 }
             });
         }

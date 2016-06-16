@@ -31,6 +31,9 @@ import java.util.List;
 
 public class RunActivity extends AppCompatActivity {
 
+    private RecyclerView rv;
+    private DbHandler saver;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,13 +55,13 @@ public class RunActivity extends AppCompatActivity {
 
 
        // final ListView listView = (ListView) findViewById(R.id.RunList);
-        RecyclerView rv = (RecyclerView) findViewById(R.id.run_recycleView);
+        rv = (RecyclerView) findViewById(R.id.run_recycleView);
         rv.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(this);
         rv.setLayoutManager(llm);
 
 
-        final DbHandler saver = new DbHandler(RunActivity.this);
+        saver = new DbHandler(RunActivity.this);
         final List<RunSession> sessionList = saver.getAllRunSessions();
         Log.v("RunListSize: ", Integer.toString(sessionList.size()));
         //final ArrayAdapter<RunSession> adapter = new ArrayAdapter<RunSession>(RunActivity.this, android.R.layout.simple_list_item_1, sessionList);
@@ -86,6 +89,7 @@ public class RunActivity extends AppCompatActivity {
 
                 @Override
                 public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+
                     int position = viewHolder.getLayoutPosition();
                     RunSession toDelete = adapter.sessions.get(position);
                     Log.v("Delete Position: ", Integer.toString(position));
@@ -150,12 +154,12 @@ public class RunActivity extends AppCompatActivity {
     @Override
     public void onResume(){
         super.onResume();
-//        ListView listView = (ListView) findViewById(R.id.RunList);
-//        DbHandler saver = new DbHandler(RunActivity.this);
-//        List<RunSession> sessionList = saver.getAllRunSessions();
-//        Log.v("RunListSize: ", Integer.toString(sessionList.size()));
-//        ArrayAdapter adapter = new ArrayAdapter<RunSession>(this, android.R.layout.simple_list_item_1, sessionList);
-//        listView.setAdapter(adapter);
+        if (rv != null){
+            List<RunSession> sessionList = saver.getAllRunSessions();
+            ((RVAdapter)rv.getAdapter()).sessions.clear();
+            ((RVAdapter)rv.getAdapter()).sessions.addAll(sessionList);
+            rv.getAdapter().notifyDataSetChanged();
+        }
 
     }
 
@@ -176,8 +180,9 @@ public class RunActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(RunSessionViewHolder holder, int position) {
-            holder.sessionDate.setText(sessions.get(position).getDate() + " Uhr");
-            holder.sessionDist.setText("Distance: 6km");
+            holder.sessionName.setText(sessions.get(position).getName());
+            holder.sessionDate.setText("Date: " + sessions.get(position).getDate());
+            holder.sessionDist.setText(", Distance: 6km");
         }
 
         @Override
@@ -194,11 +199,13 @@ public class RunActivity extends AppCompatActivity {
         public static class RunSessionViewHolder extends RecyclerView.ViewHolder {
             TextView sessionDate;
             TextView sessionDist;
+            TextView sessionName;
 
             RunSessionViewHolder(View itemView) {
                 super(itemView);
                 sessionDate = (TextView)itemView.findViewById(R.id.card_date);
                 sessionDist = (TextView)itemView.findViewById(R.id.card_dist);
+                sessionName = (TextView)itemView.findViewById(R.id.card_name);
 
             }
         }
