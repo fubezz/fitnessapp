@@ -23,8 +23,8 @@ public class LocationTrackerListener implements LocationListener {
     private AppCompatActivity activity;
     private List<Location> locList;
 
-    public long minTime = 5 * 1000; // Minimum time interval for update in seconds, i.e. 5 seconds.
-    public long minDistance = 10; // Minimum distance change for update in meters, i.e. 10 meters.
+    public long minTime = 8 * 1000; // Minimum time interval for update in seconds, i.e. 5 seconds.
+    public long minDistance = 15; // Minimum distance change for update in meters, i.e. 10 meters.
     public Location oldLocation;
 
 
@@ -63,10 +63,6 @@ public class LocationTrackerListener implements LocationListener {
      */
     void doWorkWithNewLocation(Location location) {
         if (isBetterLocation(oldLocation, location)) {
-            // If location is better, do some user preview.
-//            Toast.makeText(activity,
-//                    "Debug Position: " + location.toString(), Toast.LENGTH_SHORT)
-//                    .show();
             locList.add(location);
             Log.v("Location:", location.toString());
         }

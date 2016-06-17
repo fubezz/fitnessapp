@@ -174,7 +174,7 @@ public class NewRunActivity extends AppCompatActivity{
                     final RunSession session = new RunSession(currentTimer,"No Name",locList,stepDetector.getSteps());
                     final EditText name = new EditText(NewRunActivity.this);
                     new AlertDialog.Builder(NewRunActivity.this)
-                            .setMessage("Please type a name")
+                            .setTitle("Please type a name")
                             .setView(name)
                             .setPositiveButton("Save", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int whichButton) {

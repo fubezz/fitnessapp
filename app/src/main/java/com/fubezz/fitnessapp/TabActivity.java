@@ -59,6 +59,7 @@ public class TabActivity extends AppCompatActivity {
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
+        tabLayout.getTabAt(0).setIcon(R.drawable.common_google_signin_btn_icon_dark);
 
 
     }

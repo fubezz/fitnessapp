@@ -14,14 +14,13 @@ import java.util.List;
  */
 public class RunSession {
 
-
-
     private long dateLong;
     private String name;
     private String date;
     private String time;
     private String locations;
     private String times;
+    private int distance;
     private int steps;
 
 
@@ -38,7 +37,9 @@ public class RunSession {
         this.locations = "";
 
         //Format: <long/lat/time/acc/speed>
-        for(Location l : locList){
+        for(int i = 0; i < locList.size();i++){
+            Location l = locList.get(i);
+            if (i > 0) distance += (int) l.distanceTo(locList.get(i-1));
             String curr = "<";
             curr += Double.toString(l.getLongitude()) + "/";
             curr += Double.toString(l.getLatitude()) + "/";
@@ -58,12 +59,13 @@ public class RunSession {
 
 
     }
-    public RunSession(long dateLong,String name ,String date, String time,String locations, int steps) {
+    public RunSession(long dateLong,String name ,String date, String time,String locations, int distance, int steps) {
         this.dateLong = dateLong;
         this.name = name;
         this.date = date;
         this.time = time;
         this.locations = locations;
+        this.distance = distance;
         this.steps = steps;
     }
 
@@ -125,5 +127,13 @@ public class RunSession {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getDistance() {
+        return distance;
+    }
+
+    public void setDistance(int distance) {
+        this.distance = distance;
     }
 }

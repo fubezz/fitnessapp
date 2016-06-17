@@ -182,7 +182,14 @@ public class RunActivity extends AppCompatActivity {
         public void onBindViewHolder(RunSessionViewHolder holder, int position) {
             holder.sessionName.setText(sessions.get(position).getName());
             holder.sessionDate.setText("Date: " + sessions.get(position).getDate());
-            holder.sessionDist.setText(", Distance: 6km");
+            int dist =  sessions.get(position).getDistance();
+            if(dist > 1000){
+                float d = dist/1000;
+                holder.sessionDist.setText(", Distance: "+ Float.toString(d) +"km");
+            }else{
+                holder.sessionDist.setText(", Distance: "+ Integer.toString(dist) +"m");
+            }
+
         }
 
         @Override

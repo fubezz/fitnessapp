@@ -7,24 +7,23 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.fubezz.fitnessapp.model.DbHandler;
 import com.fubezz.fitnessapp.model.RunSession;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.Polygon;
-import com.google.android.gms.maps.model.PolygonOptions;
-import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.gms.maps.model.StreetViewPanoramaCamera;
 
-public class MapsFragment extends Fragment {
+public class MapsFragment extends Fragment implements OnMapReadyCallback{
 
-    private GoogleMap map;
+    private GoogleMap map = null;
     private RunSession session;
 
     public MapsFragment() {
@@ -37,12 +36,21 @@ public class MapsFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_maps, container, false);
         Bundle b = this.getArguments();
-        RunSession session = new DbHandler(this.getContext()).getRunSession(b.getLong("runsession"));
-        String locations = session.getLocations();
-        Log.v("locations: ", locations);
-        map = ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map)).getMap();
-        map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        session = new DbHandler(this.getContext()).getRunSession(b.getLong("runsession"));
+
+        SupportMapFragment frag = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        frag.getMapAsync(this);
+
+        return rootView;
+
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        map = googleMap;
+        map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         map.getUiSettings().setMapToolbarEnabled(false);
+        String locations = session.getLocations();
         if (locations != null && locations.length() > 0) {
             locations = locations.substring(1, locations.length()-1);
             String[] loc = locations.split("><");
@@ -68,16 +76,11 @@ public class MapsFragment extends Fragment {
                     @Override
                     public void onMapLoaded() {
                         CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-                       // map.moveCamera(cu);
+                        // map.moveCamera(cu);
                         map.animateCamera(cu);
                     }
                 });
-
-
             }
         }
-
-
-        return rootView;
     }
 }
