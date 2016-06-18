@@ -19,7 +19,6 @@ public class RunSession {
     private String date;
     private String time;
     private String locations;
-    private String times;
     private int distance;
     private int steps;
 
@@ -60,11 +59,14 @@ public class RunSession {
 
     }
     public RunSession(long dateLong,String name ,String date, String time,String locations, int distance, int steps) {
+        //date in milliseconds
         this.dateLong = dateLong;
         this.name = name;
         this.date = date;
+        //time in milliseconds
         this.time = time;
         this.locations = locations;
+        //distance in m
         this.distance = distance;
         this.steps = steps;
     }
@@ -113,13 +115,6 @@ public class RunSession {
         this.steps = steps;
     }
 
-    public String getTimes() {
-        return times;
-    }
-
-    public void setTimes(String times) {
-        this.times = times;
-    }
 
     public String getName() {
         return name;

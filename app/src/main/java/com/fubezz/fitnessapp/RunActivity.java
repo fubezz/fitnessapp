@@ -1,27 +1,18 @@
 package com.fubezz.fitnessapp;
 
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.fubezz.fitnessapp.listener.ItemClickSupport;
 import com.fubezz.fitnessapp.model.DbHandler;
@@ -102,51 +93,7 @@ public class RunActivity extends AppCompatActivity {
             };
             ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
             itemTouchHelper.attachToRecyclerView(rv);
-//            rv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-//                @Override
-//                public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
-//                    new AlertDialog.Builder(RunActivity.this)
-//                            .setTitle("Delete run session")
-//                            .setMessage("Are you sure you want to delete this session?")
-//                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-//                                public void onClick(DialogInterface dialog, int which) {
-//                                    final List<RunSession> sessionList = saver.getAllRunSessions();
-//                                    ArrayAdapter<RunSession> adp = (ArrayAdapter<RunSession>) listView.getAdapter();
-//                                    RunSession toDelete = sessionList.get(position);
-//                                    saver.deleteRunSession(toDelete);
-//                                    //remove from list
-//                                    sessionList.remove(position);
-//                                    adp.remove(adp.getItem(position));
-//                                    adp.notifyDataSetChanged();
-//                                    Toast.makeText(RunActivity.this, "Session: " + toDelete.getDate() + " deleted", Toast.LENGTH_SHORT).show();
-//                                }
-//                            })
-//                            .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-//                                public void onClick(DialogInterface dialog, int which) {
-//                                    // do nothing
-//
-//                                }
-//                            })
-//                            .setIcon(android.R.drawable.ic_dialog_alert)
-//                            .show();
-//
-//                    return true;
-//                }
-//            });
-//
-//            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//                @Override
-//                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//
-//
-//                    Intent intent = new Intent(RunActivity.this,TabActivity.class);
-//                    RunSession sessionClicked = sessionList.get(position);
-//                    intent.putExtra("runsession", sessionClicked.getDateLong());
-//                    startActivity(intent);
-//
-//
-//                }
-//            });
+
         }
 
 
@@ -173,7 +120,7 @@ public class RunActivity extends AppCompatActivity {
 
         @Override
         public RunSessionViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_layout, parent, false);
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cardrun_layout, parent, false);
             RunSessionViewHolder pvh = new RunSessionViewHolder(v);
             return pvh;
         }
