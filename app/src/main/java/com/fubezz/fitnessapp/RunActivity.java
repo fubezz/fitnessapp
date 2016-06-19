@@ -1,6 +1,7 @@
 package com.fubezz.fitnessapp;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -128,14 +129,18 @@ public class RunActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(RunSessionViewHolder holder, int position) {
             holder.sessionName.setText(sessions.get(position).getName());
+            holder.sessionName.setTextColor(Color.BLACK);
             holder.sessionDate.setText("Date: " + sessions.get(position).getDate());
+            holder.sessionDate.setTextColor(Color.BLACK);
             int dist =  sessions.get(position).getDistance();
             if(dist > 1000){
                 double d = dist/1000.0;
                 holder.sessionDist.setText(", Distance: "+ Double.toString(d) +"km");
+                holder.sessionDist.setTextColor(Color.BLACK);
             }else{
                 holder.sessionDist.setText(", Distance: "+ Integer.toString(dist) +"m");
             }
+            holder.sessionDist.setTextColor(Color.BLACK);
 
         }
 

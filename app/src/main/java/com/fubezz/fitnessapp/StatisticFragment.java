@@ -2,8 +2,6 @@ package com.fubezz.fitnessapp;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.Interpolator;
-import android.graphics.Paint;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -157,7 +155,7 @@ public class StatisticFragment extends Fragment {
                 v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cardgeneralstats_layout, parent, false);
                 return new GenStatisticsViewHolder(v);
             }else if (viewType == VEL_STATS){
-                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.velocitycard_layout, parent, false);
+                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_minperkil_layout, parent, false);
                 return new VeloStatisticsViewHolder(v);
             }
             return null;
@@ -224,11 +222,11 @@ public class StatisticFragment extends Fragment {
                         }
                     }
 
-                    h.meanVelo.setText("Ø Minutes per Kilometer: " + Float.toString(minutesPerKM/minPerKMList.size()) + " m/Km");
+                    h.meanVelo.setText("Ø: " + Float.toString(minutesPerKM/minPerKMList.size()) + " min/Km");
 
 
 
-                    LineDataSet set = new LineDataSet(minPerKMList,"");
+                    LineDataSet set = new LineDataSet(minPerKMList,"Minutes per Kilometer");
                     set.setAxisDependency(YAxis.AxisDependency.LEFT);
 
                     set.setLineWidth(1.75f);
@@ -253,9 +251,10 @@ public class StatisticFragment extends Fragment {
 
                     h.plot.setDrawGridBackground(false);
                     h.plot.getAxisRight().setEnabled(false);
-                    h.plot.setDescription("Minutes per Kilomenter");
+                    h.plot.setDescription("x: Km, y: min/Km");
                     h.plot.setData(data);
                     h.plot.invalidate();
+
 
 
                 }
