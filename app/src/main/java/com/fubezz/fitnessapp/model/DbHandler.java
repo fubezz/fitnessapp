@@ -5,9 +5,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.location.Location;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class DbHandler extends SQLiteOpenHelper {
 
@@ -72,9 +74,11 @@ public class DbHandler extends SQLiteOpenHelper {
         db.close(); // Closing database connection
     }
 
-    public void updateRunSession(RunSession session){
+    public void appendRunSession(RunSession session){
 
         RunSession help = getRunSession(session.getId());
+        List<Location> oldL = help.getListofLocations();
+        List<Location> newL = session.getListofLocations();
         if (help == null){
             addRunSession(session);
         }else{
@@ -82,10 +86,30 @@ public class DbHandler extends SQLiteOpenHelper {
             String locations = help.getLocations();
             int dist = help.getDistance();
             dist += session.getDistance();
+            dist += oldL.get(oldL.size()-1).distanceTo(newL.get(0));
             locations = locations.concat(session.getLocations());
             ContentValues values = new ContentValues();
             values.put(KEY_LOCATIONS,locations);
             values.put(KEY_DISTANCE,dist);
+            values.put(KEY_NAME,session.getName());
+            values.put(KEY_TIME, session.getTime());
+            values.put(KEY_STEPS,session.getSteps());
+            db.update(TABLE_RUN,values,KEY_ID + "=?",new String[]{String.valueOf(session.getId())});
+            db.close();
+        }
+
+    }
+
+    public void updateRunSession(RunSession session){
+
+        RunSession help = getRunSession(session.getId());
+        if (help == null){
+            addRunSession(session);
+        }else{
+            SQLiteDatabase db = this.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put(KEY_LOCATIONS,session.getLocations());
+            values.put(KEY_DISTANCE,session.getDistance());
             values.put(KEY_NAME,session.getName());
             values.put(KEY_TIME, session.getTime());
             values.put(KEY_STEPS,session.getSteps());

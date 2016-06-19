@@ -200,8 +200,6 @@ public class StatisticFragment extends Fragment {
                     int counter = 1;
                     for (int i = 0; i < locs.size(); i++){
                         Location l = locs.get(i);
-                        String ll = Integer.toString(i+1) + "," + Double.toString(l.getLatitude()) + ", " + Double.toString(l.getLongitude());
-                        Log.v("Loc:", ll);
                         if(i > 0){
                             dist += l.distanceTo(lastLoc);
                             fullDist += l.distanceTo(lastLoc);

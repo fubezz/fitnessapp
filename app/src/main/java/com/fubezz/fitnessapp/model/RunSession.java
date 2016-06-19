@@ -101,6 +101,15 @@ public class RunSession {
         return null;
     }
 
+    public void computeDistance(){
+        List<Location> locList = getListofLocations();
+        int distance = 0;
+        for (int i = 0; i < locList.size();i++){
+            if (i > 0) distance += locList.get(i).distanceTo(locList.get(i-1));
+        }
+        setDistance(distance);
+    }
+
     public String getDate() {
         return date;
     }

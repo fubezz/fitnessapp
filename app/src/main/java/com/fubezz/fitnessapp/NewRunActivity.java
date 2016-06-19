@@ -185,7 +185,7 @@ public class NewRunActivity extends AppCompatActivity{
                                     session.setName(n);
                                     Log.v("SetNameForSession: ", session.getName());
                                     DbHandler saver = new DbHandler(NewRunActivity.this);
-                                    saver.updateRunSession(session);
+                                    saver.appendRunSession(session);
                                     saveButton.setEnabled(false);
                                     startButton.setEnabled(true);
                                     resetButton.setEnabled(false);
@@ -213,7 +213,7 @@ public class NewRunActivity extends AppCompatActivity{
             if (locList.size() >= 100){
                 final RunSession session = new RunSession(startDate, currentTimer,"No Name",locList,stepDetector.getSteps());
                 DbHandler saver = new DbHandler(NewRunActivity.this);
-                saver.updateRunSession(session);
+                saver.appendRunSession(session);
                 locList.clear();
             }
 
