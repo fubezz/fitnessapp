@@ -1,12 +1,15 @@
 package com.fubezz.fitnessapp.model;
 
 import android.location.Location;
-import android.text.format.DateFormat;
 import android.util.Log;
+
+import com.google.android.gms.maps.model.LatLng;
 
 import java.text.SimpleDateFormat;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -14,7 +17,7 @@ import java.util.List;
  */
 public class RunSession {
 
-    private long dateLong;
+    private long id;
     private String name;
     private String date;
     private String time;
@@ -23,12 +26,14 @@ public class RunSession {
     private int steps;
 
 
-    public RunSession(long currentTimer, String name, List<Location> locList, int steps) {
+    public RunSession(long id, long currentTimer, String name, List<Location> locList, int steps) {
 
         SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy, HH:mm");
-        this.date = df.format(Calendar.getInstance().getTime());
+        Date d = new Date();
+        d.setTime(id);
+        this.date = df.format(d);
         Log.v("Date", date);
-        this.dateLong = Calendar.getInstance().getTimeInMillis();
+        this.id = id;
         this.name = name;
         this.time = Long.toString(currentTimer);
         Log.v("time", time);
@@ -58,9 +63,9 @@ public class RunSession {
 
 
     }
-    public RunSession(long dateLong,String name ,String date, String time,String locations, int distance, int steps) {
+    public RunSession(long id, String name , String date, String time, String locations, int distance, int steps) {
         //date in milliseconds
-        this.dateLong = dateLong;
+        this.id = id;
         this.name = name;
         this.date = date;
         //time in milliseconds
@@ -69,6 +74,31 @@ public class RunSession {
         //distance in m
         this.distance = distance;
         this.steps = steps;
+    }
+
+    public List<Location> getListofLocations(){
+        List<Location> resList = new ArrayList<>();
+        if(locations != null && locations.length() > 0){
+            String[] loc = locations.substring(1, locations.length()-1).split("><");
+            if(loc.length > 1) {
+                for (String l : loc) {
+                    String[] pos = l.split("/");
+                    double latitude = Double.parseDouble(pos[1]);
+                    double longitude = Double.parseDouble(pos[0]);
+                    LatLng p = new LatLng(latitude, longitude);
+                    Location lo = new Location("");
+                    lo.setLatitude(latitude);
+                    lo.setLongitude(longitude);
+                    lo.setTime(Long.parseLong(pos[2]));
+                    if (pos.length > 3) lo.setAccuracy(Float.parseFloat(pos[3]));
+                    if (pos.length > 4) lo.setSpeed(Float.parseFloat(pos[4]));
+                    resList.add(lo);
+
+                }
+            }
+            return resList;
+        }
+        return null;
     }
 
     public String getDate() {
@@ -95,12 +125,12 @@ public class RunSession {
         this.locations = locations;
     }
 
-    public long getDateLong() {
-        return dateLong;
+    public long getId() {
+        return id;
     }
 
-    public void setDateLong(long dateLong) {
-        this.dateLong = dateLong;
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String toString(){

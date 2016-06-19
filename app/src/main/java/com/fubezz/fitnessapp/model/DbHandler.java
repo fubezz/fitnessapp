@@ -60,7 +60,7 @@ public class DbHandler extends SQLiteOpenHelper {
     public void addRunSession(RunSession s){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(KEY_ID,s.getDateLong());
+        values.put(KEY_ID,s.getId());
         values.put(KEY_NAME,s.getName());
         values.put(KEY_DATE, s.getDate());
         values.put(KEY_TIME, s.getTime());
@@ -72,20 +72,44 @@ public class DbHandler extends SQLiteOpenHelper {
         db.close(); // Closing database connection
     }
 
+    public void updateRunSession(RunSession session){
+
+        RunSession help = getRunSession(session.getId());
+        if (help == null){
+            addRunSession(session);
+        }else{
+            SQLiteDatabase db = this.getWritableDatabase();
+            String locations = help.getLocations();
+            int dist = help.getDistance();
+            dist += session.getDistance();
+            locations = locations.concat(session.getLocations());
+            ContentValues values = new ContentValues();
+            values.put(KEY_LOCATIONS,locations);
+            values.put(KEY_DISTANCE,dist);
+            values.put(KEY_NAME,session.getName());
+            values.put(KEY_TIME, session.getTime());
+            values.put(KEY_STEPS,session.getSteps());
+            db.update(TABLE_RUN,values,KEY_ID + "=?",new String[]{String.valueOf(session.getId())});
+            db.close();
+        }
+
+    }
+
     public RunSession getRunSession(long id){
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(TABLE_RUN, new String[] { KEY_ID, KEY_NAME,
                         KEY_DATE, KEY_TIME, KEY_LOCATIONS, KEY_DISTANCE, KEY_STEPS}, KEY_ID + "=?",
                 new String[] { String.valueOf(id) }, null, null, null, null);
-        if (cursor != null)
+        if (cursor != null && cursor.getCount() > 0){
             cursor.moveToFirst();
-
-       RunSession session = new RunSession(cursor.getLong(0),cursor.getString(1),cursor.getString(2),cursor.getString(3),cursor.getString(4),cursor.getInt(5),cursor.getInt(6));
-       Log.v("Loaded Session: ", session.getDate() + ", " + session.getName());
-        // return contact
-        cursor.close();
-        db.close();
-        return session;
+            RunSession session = new RunSession(cursor.getLong(0),cursor.getString(1),cursor.getString(2),cursor.getString(3),cursor.getString(4),cursor.getInt(5),cursor.getInt(6));
+            Log.v("Loaded Session: ", session.getDate() + ", " + session.getName());
+            // return contact
+            cursor.close();
+            db.close();
+            return session;
+        }
+        else return null;
     }
 
 
@@ -117,7 +141,7 @@ public class DbHandler extends SQLiteOpenHelper {
     public void deleteRunSession(RunSession session) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_RUN, KEY_ID + "=?",
-                new String[] { String.valueOf(session.getDateLong()) });
+                new String[] { String.valueOf(session.getId()) });
         db.close();
     }
 

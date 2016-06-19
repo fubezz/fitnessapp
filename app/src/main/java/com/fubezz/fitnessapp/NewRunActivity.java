@@ -34,8 +34,10 @@ public class NewRunActivity extends AppCompatActivity{
     private Handler stepHandler = null;
     private long startTime = 0L;
     private long currentTimer = 0L;
+    private long startDate;
     private TextView stepCounter;
     private StepDetectionListener stepDetector = null;
+    private List<Location> locList;
 
 
     @Override
@@ -57,7 +59,7 @@ public class NewRunActivity extends AppCompatActivity{
 
         final TextView timerValue = (TextView) findViewById(R.id.timeTextView);
         timerHandler = new Handler();
-
+        locList = new LinkedList<Location>();
         stepCounter = (TextView) findViewById(R.id.stepLabel);
         stepDetector = new StepDetectionListener(this);
         if (stepDetector.getSensor() != null){
@@ -67,7 +69,7 @@ public class NewRunActivity extends AppCompatActivity{
         }
 
 
-        final List<Location> locList = new LinkedList<Location>();
+
         final LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         final LocationTrackerListener myListener = new LocationTrackerListener(this, locList);
 
@@ -78,9 +80,14 @@ public class NewRunActivity extends AppCompatActivity{
                 @Override
                 public void onClick(View v) {
                     //resetButton.callOnClick();
+                    stepDetector.setSteps(0);
+                    timerValue.setText("00:00:00");
+                    stepCounter.setText("Steps: 0");
+                    locList.clear();
                     stopButton.setEnabled(true);
                     startButton.setEnabled(false);
                     startTime = SystemClock.uptimeMillis();
+                    startDate = System.currentTimeMillis();
                     timerHandler.postDelayed(timeCounterThread, 0);
                     if (ActivityCompat.checkSelfPermission(NewRunActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
                             || ActivityCompat.checkSelfPermission(NewRunActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -141,12 +148,12 @@ public class NewRunActivity extends AppCompatActivity{
                                     startButton.setEnabled(true);
                                     resetButton.setEnabled(false);
                                     saveButton.setEnabled(false);
-                                    startTime = 0;
                                     stepDetector.setSteps(0);
                                     timerValue.setText("00:00:00");
                                     stepCounter.setText("Steps: 0");
                                     locList.clear();
-                                    Toast.makeText(NewRunActivity.this, "Session reseted", Toast.LENGTH_SHORT).show();
+                                    new DbHandler(NewRunActivity.this).deleteRunSession(new RunSession(startDate,currentTimer,"No Name",locList,stepDetector.getSteps()));
+                                    Toast.makeText(NewRunActivity.this, "Reset Session", Toast.LENGTH_SHORT).show();
                                 }
                             })
                             .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
@@ -166,8 +173,9 @@ public class NewRunActivity extends AppCompatActivity{
             saveButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    final RunSession session = new RunSession(currentTimer,"No Name",locList,stepDetector.getSteps());
+                    final RunSession session = new RunSession(startDate,currentTimer,"No Name",locList,stepDetector.getSteps());
                     final EditText name = new EditText(NewRunActivity.this);
+                    name.setText("No Name");
                     new AlertDialog.Builder(NewRunActivity.this)
                             .setTitle("Please type a name")
                             .setView(name)
@@ -177,7 +185,7 @@ public class NewRunActivity extends AppCompatActivity{
                                     session.setName(n);
                                     Log.v("SetNameForSession: ", session.getName());
                                     DbHandler saver = new DbHandler(NewRunActivity.this);
-                                    saver.addRunSession(session);
+                                    saver.updateRunSession(session);
                                     saveButton.setEnabled(false);
                                     startButton.setEnabled(true);
                                     resetButton.setEnabled(false);
@@ -201,7 +209,15 @@ public class NewRunActivity extends AppCompatActivity{
             secs = secs % 60;
             TextView timerValue = (TextView) findViewById(R.id.timeTextView);
             timerValue.setText("" + hours + ":" + String.format("%02d",mins) + ":" + String.format("%02d",secs));
-            timerHandler.postDelayed(this,0);
+
+            if (locList.size() >= 100){
+                final RunSession session = new RunSession(startDate, currentTimer,"No Name",locList,stepDetector.getSteps());
+                DbHandler saver = new DbHandler(NewRunActivity.this);
+                saver.updateRunSession(session);
+                locList.clear();
+            }
+
+            timerHandler.postDelayed(this,1000);
         }
     };
 

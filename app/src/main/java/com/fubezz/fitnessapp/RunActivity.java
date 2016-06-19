@@ -66,7 +66,7 @@ public class RunActivity extends AppCompatActivity {
                 public void onItemClicked(RecyclerView recyclerView, int position, View v) {
                     Intent intent = new Intent(RunActivity.this,TabActivity.class);
                     RunSession sessionClicked = sessionList.get(position);
-                    intent.putExtra("runsession", sessionClicked.getDateLong());
+                    intent.putExtra("runsession", sessionClicked.getId());
                     startActivity(intent);
                 }
             });
@@ -131,8 +131,8 @@ public class RunActivity extends AppCompatActivity {
             holder.sessionDate.setText("Date: " + sessions.get(position).getDate());
             int dist =  sessions.get(position).getDistance();
             if(dist > 1000){
-                float d = dist/1000;
-                holder.sessionDist.setText(", Distance: "+ Float.toString(d) +"km");
+                double d = dist/1000.0;
+                holder.sessionDist.setText(", Distance: "+ Double.toString(d) +"km");
             }else{
                 holder.sessionDist.setText(", Distance: "+ Integer.toString(dist) +"m");
             }
