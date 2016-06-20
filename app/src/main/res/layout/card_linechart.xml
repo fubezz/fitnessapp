@@ -17,18 +17,17 @@
         android:orientation="vertical" >
 
         <TextView
-            android:id="@+id/card_velHeadline"
+            android:id="@+id/card_linechart_headline"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="#000000"
-            android:text="Minutes per Kilometer"
             android:textSize="15dp"
             android:gravity="center"
             android:paddingBottom="4dp"
             android:paddingLeft="4dp"/>
 
         <TextView
-            android:id="@+id/card_velMean"
+            android:id="@+id/card_linechart_mean"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="#000000"
@@ -36,9 +35,9 @@
             android:paddingLeft="4dp"/>
 
         <com.github.mikephil.charting.charts.LineChart
-            android:id="@+id/vel_chart"
+            android:id="@+id/card_linechart_chart"
             android:layout_width="match_parent"
-            android:layout_height="200dp" />
+            android:layout_height="250dp" />
 
 
     </LinearLayout>

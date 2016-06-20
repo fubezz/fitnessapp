@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.fubezz.fitnessapp.model.DbHandler;
+import com.fubezz.fitnessapp.model.RunSession;
 
 public class TabActivity extends AppCompatActivity implements StatisticFragment.OnFragmentInteractionListener {
 
@@ -42,7 +43,8 @@ public class TabActivity extends AppCompatActivity implements StatisticFragment.
         setContentView(R.layout.activity_tab);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.tab_toolbar);
-        toolbar.setTitle(new DbHandler(this).getRunSession(currentSession).getDate());
+        RunSession current = new DbHandler(this).getRunSession(currentSession);
+        toolbar.setTitle(current.getName() + ", " + current.getDate());
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         // Create the adapter that will return a fragment for each of the three

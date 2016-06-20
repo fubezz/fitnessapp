@@ -21,6 +21,7 @@ public class RunSession {
     private String name;
     private String date;
     private String time;
+    //Format: <long/lat/time/acc/speed>
     private String locations;
     private int distance;
     private int steps;
@@ -40,7 +41,7 @@ public class RunSession {
 
         this.locations = "";
 
-        //Format: <long/lat/time/acc/speed>
+
         for(int i = 0; i < locList.size();i++){
             Location l = locList.get(i);
             if (i > 0) distance += (int) l.distanceTo(locList.get(i-1));
@@ -48,8 +49,8 @@ public class RunSession {
             curr += Double.toString(l.getLongitude()) + "/";
             curr += Double.toString(l.getLatitude()) + "/";
             curr += Long.toString(l.getTime()) + "/";
-            if(l.hasAccuracy()){
-                curr += Float.toString(l.getAccuracy()) + "/";
+            if(l.hasAltitude()){
+                curr += Double.toString(l.getAltitude()) + "/";
             }
             if(l.hasSpeed()){
                 curr += Float.toString(l.getSpeed());
@@ -90,8 +91,10 @@ public class RunSession {
                     lo.setLatitude(latitude);
                     lo.setLongitude(longitude);
                     lo.setTime(Long.parseLong(pos[2]));
-                    if (pos.length > 3) lo.setAccuracy(Float.parseFloat(pos[3]));
+                    if (pos.length > 3) lo.setAltitude(Double.parseDouble(pos[3]));
+                    else lo.setAltitude(Double.MIN_VALUE);
                     if (pos.length > 4) lo.setSpeed(Float.parseFloat(pos[4]));
+                    else lo.setSpeed(Float.MIN_VALUE);
                     resList.add(lo);
 
                 }

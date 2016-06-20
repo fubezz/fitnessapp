@@ -12,23 +12,24 @@
     tools:context=".NewRunActivity"
     tools:showIn="@layout/activity_new_run">
 
-    <Button
+    <Button style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Start"
         android:id="@+id/btnNewRunStart"
-        android:layout_marginTop="42dp"
-        android:layout_marginLeft="51dp"
-        android:layout_marginStart="51dp"
+        android:layout_marginTop="49dp"
+        android:background="#07d500"
+        android:radius="15dp"
         android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:background="#00ff00" />
+        android:layout_toLeftOf="@+id/btnNewRunReset"
+        android:layout_toStartOf="@+id/btnNewRunReset" />
 
-    <Button
+    <Button style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Stop"
+        android:radius="15dp"
+        android:theme="@style/Widget.AppCompat.Button.Colored"
         android:id="@+id/btnNewRunStop"
         android:layout_marginRight="51dp"
         android:layout_marginEnd="51dp"
@@ -36,7 +37,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:saveEnabled="false"
-        android:background="#ff0000" />
+        android:background="#de0909" />
 
 
     <TextView
@@ -55,19 +56,24 @@
         android:layout_alignEnd="@+id/btnNewRunStop" />
 
     <Button
+        style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Reset"
+        android:radius="15dp"
         android:id="@+id/btnNewRunReset"
         android:saveEnabled="false"
-        android:layout_below="@+id/timeTextView"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="131dp" />
+        android:layout_marginTop="50dp"
+        android:layout_below="@+id/stepLabel"
+        android:layout_toLeftOf="@+id/btnNewRunStop"
+        android:layout_toStartOf="@+id/btnNewRunStop" />
 
     <Button
+        style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Save"
+        android:radius="15dp"
         android:id="@+id/btnNewRunSave"
         android:layout_marginTop="40dp"
         android:saveEnabled="false"
@@ -81,10 +87,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
+        android:gravity="center"
         android:text="Steps: 0"
         android:id="@+id/stepLabel"
         android:textSize="40sp"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignLeft="@+id/timeTextView"
+        android:layout_alignStart="@+id/timeTextView"
+        android:layout_alignRight="@+id/timeTextView"
+        android:layout_alignEnd="@+id/timeTextView" />
 
 </RelativeLayout>

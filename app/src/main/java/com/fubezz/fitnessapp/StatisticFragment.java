@@ -39,10 +39,11 @@ public class StatisticFragment extends Fragment {
 
     private static final String RUN_SESSION = "runSessionId";
     private static final int GEN_STATS = 0;
-    private static final int VEL_STATS = 1;
+    private static final int MIN_PER_KM_STATS = 1;
+    private static final int ALTITUDE_STATS = 2;
 
 
-    private static final int[] layouts = {GEN_STATS,VEL_STATS};
+    private static final int[] layouts = {GEN_STATS, MIN_PER_KM_STATS, ALTITUDE_STATS};
 
 
     // TODO: Rename and change types of parameters
@@ -152,11 +153,14 @@ public class StatisticFragment extends Fragment {
             View v;
 
             if (viewType == GEN_STATS){
-                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cardgeneralstats_layout, parent, false);
+                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_generalstats, parent, false);
                 return new GenStatisticsViewHolder(v);
-            }else if (viewType == VEL_STATS){
-                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_minperkil_layout, parent, false);
-                return new VeloStatisticsViewHolder(v);
+            }else if (viewType == MIN_PER_KM_STATS){
+                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_linechart, parent, false);
+                return new MinPerKMStatisticsViewHolder(v);
+            }else if (viewType == ALTITUDE_STATS){
+                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_linechart, parent, false);
+                return new AltStatisticsViewHolder(v);
             }
             return null;
         }
@@ -169,7 +173,7 @@ public class StatisticFragment extends Fragment {
                 GenStatisticsViewHolder h = (GenStatisticsViewHolder) holder;
                 int dist = session.getDistance();
                 if(dist > 1000){
-                    double d = dist/1000.0;
+                    double d = Math.round(100.0 * (dist/1000.0)) / 100.0;
                     h.distance.setText("Distance: "+ Double.toString(d) +"km");
                 }else{
                     h.distance.setText("Distance: "+ Integer.toString(dist) +"m");
@@ -183,12 +187,13 @@ public class StatisticFragment extends Fragment {
                 String runningTime = hours + ":" + mins + ":" + secs;
                 h.time.setText("Running Time: " + runningTime);
                 h.steps.setText("Steps: " + Integer.toString(session.getSteps()));
-            }else if(holder.getItemViewType() == VEL_STATS){
+            }else if(holder.getItemViewType() == MIN_PER_KM_STATS){
+
                 List<Location> locs = session.getListofLocations();
                 if (locs != null){
 
-                    VeloStatisticsViewHolder h = (VeloStatisticsViewHolder) holder;
-
+                    MinPerKMStatisticsViewHolder h = (MinPerKMStatisticsViewHolder) holder;
+                    h.headline.setText("Pace");
                     float minutesPerKM = 0;
                     double fullDist = 0;
                     Location lastLoc = locs.get(0);
@@ -221,8 +226,8 @@ public class StatisticFragment extends Fragment {
 
                         }
                     }
-
-                    h.meanVelo.setText("Ø: " + Float.toString(minutesPerKM/minPerKMList.size()) + " min/Km");
+                    float mean = Math.round(minutesPerKM/minPerKMList.size() * 100.0f) / 100.0f;
+                    h.meanVelo.setText("Ø: " + Float.toString(mean) + " min/km");
 
 
 
@@ -242,7 +247,7 @@ public class StatisticFragment extends Fragment {
                     dataSets.add(set);
                     ArrayList<String> xVals = new ArrayList<String>();
                     for (int i = 0; i < minPerKMList.size()+2; i++){
-                        String v = Integer.toString(i) + ". Km";
+                        String v = Integer.toString(i) + ". km";
                         xVals.add(v);
                     }
                     LineData data = new LineData(xVals, dataSets);
@@ -251,7 +256,7 @@ public class StatisticFragment extends Fragment {
 
                     h.plot.setDrawGridBackground(false);
                     h.plot.getAxisRight().setEnabled(false);
-                    h.plot.setDescription("x: Km, y: min/Km");
+                    h.plot.setDescription("x: km, y: min/km");
                     h.plot.setData(data);
                     h.plot.invalidate();
 
@@ -260,6 +265,60 @@ public class StatisticFragment extends Fragment {
                 }
 
 
+            }else if (holder.getItemViewType() == ALTITUDE_STATS){
+                List<Location> locs = session.getListofLocations();
+                if (locs != null) {
+                    Location start = locs.get(0);
+                    AltStatisticsViewHolder h = (AltStatisticsViewHolder) holder;
+                    h.headline.setText("Speed");
+                    List<Entry> speedList = new ArrayList<>();
+                    float meanSpead = 0.0f;
+                    for (int i = 0; i < locs.size();i++){
+                        Location l = locs.get(i);
+                        if(l.getSpeed() > Float.MIN_VALUE){
+                            float speed = l.getSpeed() * 3.6f;
+                            meanSpead += speed;
+                            Entry e = new Entry(speed, i);
+                            speedList.add(e);
+                        }
+                    }
+                    meanSpead /= speedList.size();
+                    meanSpead = Math.round(meanSpead * 100.0f) / 100.0f;
+                    h.meanSpeed.setText("Ø: " + meanSpead + " km/h");
+                    LineDataSet set = new LineDataSet(speedList,"Velocity in km/h");
+                    set.setAxisDependency(YAxis.AxisDependency.LEFT);
+
+                    set.setLineWidth(1.75f);
+                    set.setCircleRadius(0.0f);
+                    set.setCircleHoleRadius(0.0f);
+                    set.setColor(Color.BLUE);
+                    set.setCircleColor(Color.BLUE);
+                    set.setHighLightColor(Color.BLUE);
+                    //set.setDrawValues(true);
+                    set.setDrawCubic(true);
+                    set.setDrawFilled(true);
+
+                    ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
+                    dataSets.add(set);
+                    ArrayList<String> xVals = new ArrayList<String>();
+                    double dist = 0;
+                    Location lastLoc = locs.get(0);
+                    for (int i = 0; i < locs.size(); i++){
+                        dist += (locs.get(i).distanceTo(lastLoc) / 1000.0);
+                        lastLoc = locs.get(i);
+                        dist = Math.round(dist * 100) / 100.0;
+                        String v = Double.toString(dist) + " km";
+                        xVals.add(v);
+                    }
+                    LineData data = new LineData(xVals, dataSets);
+
+                    h.plot.setDrawGridBackground(false);
+                    h.plot.getAxisRight().setEnabled(false);
+                    h.plot.setDescription("x: km, y: km/h");
+                    h.plot.setData(data);
+                    h.plot.invalidate();
+
+                }
             }
 
         }
@@ -301,16 +360,31 @@ public class StatisticFragment extends Fragment {
             }
         }
 
-        private class VeloStatisticsViewHolder extends ViewHolder{
+        private class MinPerKMStatisticsViewHolder extends ViewHolder{
             TextView meanVelo;
+            TextView headline;
             LineChart plot;
 
-            public VeloStatisticsViewHolder(View itemView){
+            public MinPerKMStatisticsViewHolder(View itemView){
                 super(itemView);
-                meanVelo = (TextView)itemView.findViewById(R.id.card_velMean);
-                plot = (LineChart) itemView.findViewById(R.id.vel_chart);
+                meanVelo = (TextView)itemView.findViewById(R.id.card_linechart_mean);
+                plot = (LineChart) itemView.findViewById(R.id.card_linechart_chart);
+                headline = (TextView) itemView.findViewById(R.id.card_linechart_headline);
             }
 
+        }
+
+        private class AltStatisticsViewHolder extends ViewHolder{
+            LineChart plot;
+            TextView meanSpeed;
+            TextView headline;
+
+            public AltStatisticsViewHolder(View itemView){
+                super(itemView);
+                plot = (LineChart) itemView.findViewById(R.id.card_linechart_chart);
+                meanSpeed = (TextView) itemView.findViewById(R.id.card_linechart_mean);
+                headline = (TextView) itemView.findViewById(R.id.card_linechart_headline);
+            }
         }
 
     }
