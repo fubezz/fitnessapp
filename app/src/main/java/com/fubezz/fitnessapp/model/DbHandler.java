@@ -77,11 +77,11 @@ public class DbHandler extends SQLiteOpenHelper {
     public void appendRunSession(RunSession session){
 
         RunSession help = getRunSession(session.getId());
-        List<Location> oldL = help.getListofLocations();
-        List<Location> newL = session.getListofLocations();
         if (help == null){
             addRunSession(session);
         }else{
+            List<Location> oldL = help.getListofLocations();
+            List<Location> newL = session.getListofLocations();
             SQLiteDatabase db = this.getWritableDatabase();
             String locations = help.getLocations();
             int dist = help.getDistance();

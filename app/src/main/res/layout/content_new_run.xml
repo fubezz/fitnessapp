@@ -17,12 +17,13 @@
         android:layout_height="wrap_content"
         android:text="Start"
         android:id="@+id/btnNewRunStart"
-        android:layout_marginTop="49dp"
         android:background="#07d500"
         android:radius="15dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@+id/btnNewRunReset"
-        android:layout_toStartOf="@+id/btnNewRunReset" />
+        android:layout_toStartOf="@+id/btnNewRunReset"
+        android:layout_toLeftOf="@+id/btnNewRunReset" />
 
     <Button style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
@@ -31,13 +32,13 @@
         android:radius="15dp"
         android:theme="@style/Widget.AppCompat.Button.Colored"
         android:id="@+id/btnNewRunStop"
-        android:layout_marginRight="51dp"
-        android:layout_marginEnd="51dp"
+        android:saveEnabled="false"
+        android:background="#de0909"
         android:layout_alignTop="@+id/btnNewRunStart"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:saveEnabled="false"
-        android:background="#de0909" />
+        android:layout_toRightOf="@+id/btnNewRunReset"
+        android:layout_toEndOf="@+id/btnNewRunReset" />
 
 
     <TextView
@@ -49,11 +50,11 @@
         android:text="@string/timerVal"
         android:id="@+id/timeTextView"
         android:layout_below="@+id/btnNewRunStart"
-        android:layout_alignLeft="@+id/btnNewRunStart"
-        android:layout_alignStart="@+id/btnNewRunStart"
-        android:layout_marginTop="54dp"
-        android:layout_alignRight="@+id/btnNewRunStop"
-        android:layout_alignEnd="@+id/btnNewRunStop" />
+        android:layout_marginTop="56dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <Button
         style="@style/Widget.AppCompat.Button.Colored"
@@ -63,10 +64,9 @@
         android:radius="15dp"
         android:id="@+id/btnNewRunReset"
         android:saveEnabled="false"
-        android:layout_marginTop="50dp"
-        android:layout_below="@+id/stepLabel"
-        android:layout_toLeftOf="@+id/btnNewRunStop"
-        android:layout_toStartOf="@+id/btnNewRunStop" />
+        android:layout_above="@+id/btnNewRunSave"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="60dp" />
 
     <Button
         style="@style/Widget.AppCompat.Button.Colored"
@@ -75,13 +75,13 @@
         android:text="Save"
         android:radius="15dp"
         android:id="@+id/btnNewRunSave"
-        android:layout_marginTop="40dp"
         android:saveEnabled="false"
-        android:layout_below="@+id/btnNewRunReset"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="63dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_alignRight="@+id/btnNewRunStop"
-        android:layout_alignEnd="@+id/btnNewRunStop"
-        android:layout_alignLeft="@+id/timeTextView"
-        android:layout_alignStart="@+id/timeTextView" />
+        android:layout_alignEnd="@+id/btnNewRunStop" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -91,10 +91,11 @@
         android:text="Steps: 0"
         android:id="@+id/stepLabel"
         android:textSize="40sp"
-        android:layout_centerVertical="true"
-        android:layout_alignLeft="@+id/timeTextView"
-        android:layout_alignStart="@+id/timeTextView"
-        android:layout_alignRight="@+id/timeTextView"
-        android:layout_alignEnd="@+id/timeTextView" />
+        android:layout_below="@+id/timeTextView"
+        android:layout_marginTop="82dp"
+        android:layout_alignRight="@+id/btnNewRunStop"
+        android:layout_alignEnd="@+id/btnNewRunStop"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>
