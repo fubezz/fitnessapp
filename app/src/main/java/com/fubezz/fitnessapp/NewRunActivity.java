@@ -89,11 +89,25 @@ public class NewRunActivity extends AppCompatActivity{
                     startTime = SystemClock.uptimeMillis();
                     startDate = System.currentTimeMillis();
                     timerHandler.postDelayed(timeCounterThread, 0);
-                    if (ActivityCompat.checkSelfPermission(NewRunActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                            || ActivityCompat.checkSelfPermission(NewRunActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                        String locationProvider = LocationManager.NETWORK_PROVIDER;
-                        myListener.oldLocation = locationManager.getLastKnownLocation(locationProvider);
+                    if (ActivityCompat.checkSelfPermission(NewRunActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
+                        boolean isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+                        boolean isNetEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+                        String locationProvider;
+                        if (!isGPSEnabled && !isNetEnabled){
+                            Toast.makeText(NewRunActivity.this,
+                                    "Please activate GPS or Network", Toast.LENGTH_SHORT)
+                                    .show();
+                        }else if (isGPSEnabled){
+                            locationProvider = LocationManager.GPS_PROVIDER;
+                            myListener.oldLocation = locationManager.getLastKnownLocation(locationProvider);
+
+                        }else if (isNetEnabled){
+                            locationProvider = LocationManager.NETWORK_PROVIDER;
+                            myListener.oldLocation = locationManager.getLastKnownLocation(locationProvider);
+                        }
                         locationManager.requestLocationUpdates(myListener.getProviderName(), myListener.minTime, myListener.minDistance, myListener);
+
                     } else {
                         Toast.makeText(NewRunActivity.this,
                                 "For GPS tracking please set permissions", Toast.LENGTH_SHORT)
@@ -117,10 +131,8 @@ public class NewRunActivity extends AppCompatActivity{
                     resetButton.setEnabled(true);
                     saveButton.setEnabled(true);
                     stopButton.setEnabled(false);
-
                     timerHandler.removeCallbacks(timeCounterThread);
-                    if (ActivityCompat.checkSelfPermission(NewRunActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                            || ActivityCompat.checkSelfPermission(NewRunActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    if (ActivityCompat.checkSelfPermission(NewRunActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                         locationManager.removeUpdates(myListener);
 //                        Toast.makeText(NewRunActivity.this,
 //                                "Debug GPS positions: " + locList.size(), Toast.LENGTH_SHORT)
