@@ -41,10 +41,10 @@ public class LocationTrackerListener implements LocationListener {
         LocationManager locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
 
         Criteria criteria = new Criteria();
-        criteria.setPowerRequirement(Criteria.POWER_LOW); // Chose your desired power consumption level.
+        criteria.setPowerRequirement(Criteria.POWER_MEDIUM); // Chose your desired power consumption level.
         criteria.setAccuracy(Criteria.ACCURACY_FINE); // Choose your accuracy requirement.
         criteria.setSpeedRequired(true); // Chose if speed for first location fix is required.
-        criteria.setAltitudeRequired(false); // Choose if you use altitude.
+        criteria.setAltitudeRequired(true); // Choose if you use altitude.
         criteria.setBearingRequired(false); // Choose if you use bearing.
         criteria.setCostAllowed(false); // Choose if this provider can waste money :-)
 

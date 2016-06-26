@@ -94,19 +94,20 @@ public class NewRunActivity extends AppCompatActivity{
                         boolean isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
                         boolean isNetEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
                         String locationProvider;
-                        if (!isGPSEnabled && !isNetEnabled){
-                            Toast.makeText(NewRunActivity.this,
-                                    "Please activate GPS or Network", Toast.LENGTH_SHORT)
-                                    .show();
+                         if (isNetEnabled){
+                            locationProvider = LocationManager.NETWORK_PROVIDER;
+                            myListener.oldLocation = locationManager.getLastKnownLocation(locationProvider);
+                            locationManager.requestLocationUpdates(myListener.getProviderName(), myListener.minTime, myListener.minDistance, myListener);
                         }else if (isGPSEnabled){
                             locationProvider = LocationManager.GPS_PROVIDER;
                             myListener.oldLocation = locationManager.getLastKnownLocation(locationProvider);
-
-                        }else if (isNetEnabled){
-                            locationProvider = LocationManager.NETWORK_PROVIDER;
-                            myListener.oldLocation = locationManager.getLastKnownLocation(locationProvider);
+                            locationManager.requestLocationUpdates(myListener.getProviderName(), myListener.minTime, myListener.minDistance, myListener);
+                        }else {
+                            Toast.makeText(NewRunActivity.this,
+                                    "Please activate GPS or Network", Toast.LENGTH_SHORT)
+                                    .show();
                         }
-                        locationManager.requestLocationUpdates(myListener.getProviderName(), myListener.minTime, myListener.minDistance, myListener);
+
 
                     } else {
                         Toast.makeText(NewRunActivity.this,
