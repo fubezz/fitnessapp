@@ -92,7 +92,7 @@ public class NewRunActivity extends AppCompatActivity{
                     if (ActivityCompat.checkSelfPermission(NewRunActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
                         boolean isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-                        boolean isNetEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+                        boolean isNetEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
                         String locationProvider;
                         if (!isGPSEnabled && !isNetEnabled){
                             Toast.makeText(NewRunActivity.this,
