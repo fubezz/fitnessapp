@@ -41,9 +41,10 @@ public class StatisticFragment extends Fragment {
     private static final int GEN_STATS = 0;
     private static final int MIN_PER_KM_STATS = 1;
     private static final int ALTITUDE_STATS = 2;
+    private static final int SPEED_STATS = 3;
 
 
-    private static final int[] layouts = {GEN_STATS, MIN_PER_KM_STATS, ALTITUDE_STATS};
+    private static final int[] layouts = {GEN_STATS, MIN_PER_KM_STATS, SPEED_STATS};
 
 
     // TODO: Rename and change types of parameters
@@ -158,9 +159,9 @@ public class StatisticFragment extends Fragment {
             }else if (viewType == MIN_PER_KM_STATS){
                 v = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_linechart, parent, false);
                 return new MinPerKMStatisticsViewHolder(v);
-            }else if (viewType == ALTITUDE_STATS){
+            }else if (viewType == SPEED_STATS){
                 v = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_linechart, parent, false);
-                return new AltStatisticsViewHolder(v);
+                return new SpeedStatisticsViewHolder(v);
             }
             return null;
         }
@@ -190,7 +191,7 @@ public class StatisticFragment extends Fragment {
             }else if(holder.getItemViewType() == MIN_PER_KM_STATS){
 
                 List<Location> locs = session.getListofLocations();
-                if (locs != null){
+                if (locs != null && locs.size() > 0){
 
                     MinPerKMStatisticsViewHolder h = (MinPerKMStatisticsViewHolder) holder;
                     h.headline.setText("Pace");
@@ -234,6 +235,7 @@ public class StatisticFragment extends Fragment {
                     LineDataSet set = new LineDataSet(minPerKMList,"Minutes per Kilometer");
                     set.setAxisDependency(YAxis.AxisDependency.LEFT);
 
+
                     set.setLineWidth(1.75f);
                     set.setCircleRadius(5f);
                     set.setCircleHoleRadius(2.5f);
@@ -253,7 +255,7 @@ public class StatisticFragment extends Fragment {
                     LineData data = new LineData(xVals, dataSets);
 
                     Log.v("ListOfVelos: ", Integer.toString(minPerKMList.size()));
-
+                    h.plot.getAxisLeft().setInverted(true);
                     h.plot.setDrawGridBackground(false);
                     h.plot.getAxisRight().setEnabled(false);
                     h.plot.setDescription("x: km, y: min/km");
@@ -265,11 +267,11 @@ public class StatisticFragment extends Fragment {
                 }
 
 
-            }else if (holder.getItemViewType() == ALTITUDE_STATS){
+            }else if (holder.getItemViewType() == SPEED_STATS){
                 List<Location> locs = session.getListofLocations();
-                if (locs != null) {
+                if (locs != null && locs.size() > 0) {
                     Location start = locs.get(0);
-                    AltStatisticsViewHolder h = (AltStatisticsViewHolder) holder;
+                    SpeedStatisticsViewHolder h = (SpeedStatisticsViewHolder) holder;
                     h.headline.setText("Speed");
                     List<Entry> speedList = new ArrayList<>();
                     float meanSpead = 0.0f;
@@ -374,12 +376,12 @@ public class StatisticFragment extends Fragment {
 
         }
 
-        private class AltStatisticsViewHolder extends ViewHolder{
+        private class SpeedStatisticsViewHolder extends ViewHolder{
             LineChart plot;
             TextView meanSpeed;
             TextView headline;
 
-            public AltStatisticsViewHolder(View itemView){
+            public SpeedStatisticsViewHolder(View itemView){
                 super(itemView);
                 plot = (LineChart) itemView.findViewById(R.id.card_linechart_chart);
                 meanSpeed = (TextView) itemView.findViewById(R.id.card_linechart_mean);

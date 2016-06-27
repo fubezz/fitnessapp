@@ -53,7 +53,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback{
         map.getUiSettings().setMapToolbarEnabled(true);
 
         List<Location> locs = session.getListofLocations();
-        if(locs != null) {
+        if(locs != null && locs.size() > 0) {
             PolylineOptions polLineOp = new PolylineOptions().width(15).color(Color.RED);
             LatLngBounds.Builder builder = new LatLngBounds.Builder();
             for (Location l : locs) {

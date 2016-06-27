@@ -90,21 +90,15 @@ public class NewRunActivity extends AppCompatActivity{
                     startDate = System.currentTimeMillis();
                     timerHandler.postDelayed(timeCounterThread, 0);
                     if (ActivityCompat.checkSelfPermission(NewRunActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-
-                        boolean isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
                         boolean isNetEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
                         String locationProvider;
-                         if (isNetEnabled){
+                        if (isNetEnabled){
                             locationProvider = LocationManager.NETWORK_PROVIDER;
-                            myListener.oldLocation = locationManager.getLastKnownLocation(locationProvider);
-                            locationManager.requestLocationUpdates(myListener.getProviderName(), myListener.minTime, myListener.minDistance, myListener);
-                        }else if (isGPSEnabled){
-                            locationProvider = LocationManager.GPS_PROVIDER;
                             myListener.oldLocation = locationManager.getLastKnownLocation(locationProvider);
                             locationManager.requestLocationUpdates(myListener.getProviderName(), myListener.minTime, myListener.minDistance, myListener);
                         }else {
                             Toast.makeText(NewRunActivity.this,
-                                    "Please activate GPS or Network", Toast.LENGTH_SHORT)
+                                    "Please activate GPS", Toast.LENGTH_SHORT)
                                     .show();
                         }
 

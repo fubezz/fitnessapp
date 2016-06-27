@@ -21,7 +21,7 @@ public class LocationTrackerListener implements LocationListener {
     private List<Location> locList;
 
     public static long minTime = 5 * 1000; // Minimum time interval for update in milliseconds, i.e. 5 seconds.
-    public static long minDistance = 10; // Minimum distance change for update in meters, i.e. 10 meters.
+    public static long minDistance = 5; // Minimum distance change for update in meters, i.e. 10 meters.
     public Location oldLocation;
 
 
@@ -41,7 +41,7 @@ public class LocationTrackerListener implements LocationListener {
         LocationManager locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
 
         Criteria criteria = new Criteria();
-        criteria.setPowerRequirement(Criteria.POWER_MEDIUM); // Chose your desired power consumption level.
+        criteria.setPowerRequirement(Criteria.POWER_LOW); // Chose your desired power consumption level.
         criteria.setAccuracy(Criteria.ACCURACY_FINE); // Choose your accuracy requirement.
         criteria.setSpeedRequired(true); // Chose if speed for first location fix is required.
         criteria.setAltitudeRequired(true); // Choose if you use altitude.
@@ -50,6 +50,7 @@ public class LocationTrackerListener implements LocationListener {
 
         // Provide your criteria and flag enabledOnly that tells
         // LocationManager only to return active providers.
+        Toast.makeText(activity, "Using Provider: " + locationManager.getBestProvider(criteria, true),Toast.LENGTH_SHORT).show();
         return locationManager.getBestProvider(criteria, true);
     }
 
@@ -70,8 +71,8 @@ public class LocationTrackerListener implements LocationListener {
     /**
      * Time difference threshold set for one minute.
      */
-    static final int TIME_DIFFERENCE_THRESHOLD = 1 * 60 * 1000;
-
+    static final int TIME_DIFFERENCE_THRESHOLD = 1 * 30 * 1000; // in ms
+    static final int ACCURACY_DIFFERENCE_THRESHOLD = 10; //in m
     /**
      * Decide if new location is better than older by following some basic criteria.
      * This algorithm can be as simple or complicated as your needs dictate it.
@@ -101,7 +102,12 @@ public class LocationTrackerListener implements LocationListener {
             long timeDifference = newLocation.getTime() - oldLocation.getTime();
 
             // If time difference is not greater then allowed threshold we accept it.
-            if (timeDifference > - TIME_DIFFERENCE_THRESHOLD) {
+            if (timeDifference > TIME_DIFFERENCE_THRESHOLD) {
+                return true;
+            }
+        }else if (!isMoreAccurate && isNewer){
+            float accDifference = newLocation.getAccuracy() - oldLocation.getAccuracy();
+            if (accDifference <= ACCURACY_DIFFERENCE_THRESHOLD){
                 return true;
             }
         }
